@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#00BCD4</color>
+    <color name="colorPrimaryDark">#008c9e</color>
+    <color name="colorAccent">#303F9F</color>
+    <color name="white">#ffffff</color>
+
+    <color name="textBlue">#00BCD4</color>
+    <color name="area1">#4600bcd4</color>
+    <color name="area2">#78ff6666</color>
+    <color name="area3">#4633cc00</color>
+    <color name="area4">#466633ff</color>
+
+    <color name="area1btn">#b400bcd4</color>
+    <color name="area2btn">#78ff6666</color>
+    <color name="area3btn">#b433cc00</color>
+    <color name="area4btn">#466633ff</color>
+
+
+    <color name="red">#f44336</color>
+
+</resources>

@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">OssProject</string>
+    <string name="title_activity_maps">Oss Project</string>
+    <string name="area1">Area 1</string>
+    <string name="area2">Area 2</string>
+    <string name="area3">Area 3</string>
+    <string name="area4">Area 4</string>
+    <string name="myAccount">My Account</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="map">Map</string>
+    <string name="search">Search</string>
+
+</resources>
