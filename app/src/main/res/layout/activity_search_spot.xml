@@ -24,76 +24,103 @@
                 android:layout_height="wrap_content" />
 
             <EditText
+                android:id="@+id/et_search"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
         <ImageButton
+            android:id="@+id/btn_search"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:backgroundTint="@color/area1"
+            android:backgroundTint="@color/colorPrimary"
             app:srcCompat="@android:drawable/ic_search_category_default" />
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <CheckBox
+            android:id="@+id/cb_selectAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="@string/name"
+            android:textColor="@color/textGrey" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/action"
+            android:textColor="@color/textGrey" />
     </LinearLayout>
-    <LinearLayout
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_spots"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_weight="1"
+        tools:listitem="@layout/row_spot" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
 
 
-            <Button
-                android:id="@+id/btn_addFav"
-                android:textColor="@color/white"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:backgroundTint="@color/colorPrimary"
-                android:paddingRight="50dp"
-                android:text="Add favorite" />
+        <Button
+            android:id="@+id/btn_addFav"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:backgroundTint="@color/colorPrimary"
+            android:paddingRight="50dp"
+            android:text="Add favorite"
+            android:textColor="@color/white" />
 
-            <Button
-                android:id="@+id/btn_viewMap"
-                android:textColor="@color/white"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/colorPrimary"
-                android:paddingRight="50dp"
-                android:text="View on map" />
+        <Button
+            android:id="@+id/btn_viewMap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorPrimary"
+            android:paddingRight="50dp"
+            android:text="View on map"
+            android:textColor="@color/white" />
 
-            <ImageView
-                android:id="@+id/iv_map"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:elevation="2dp"
-                android:src="@android:drawable/ic_dialog_map"
-                android:layout_centerVertical="true"
-                android:layout_alignEnd="@+id/btn_viewMap"
-                android:layout_marginEnd="10dp" />
-            <ImageView
-                android:id="@+id/iv_heart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:elevation="2dp"
-                android:src="@android:drawable/ic_dialog_map"
-                android:layout_centerVertical="true"
-                android:layout_alignEnd="@+id/btn_addFav"
-                android:layout_marginEnd="10dp" />
+        <ImageView
+            android:id="@+id/iv_map"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/btn_viewMap"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:elevation="2dp"
+            android:src="@android:drawable/ic_dialog_map" />
 
-        </RelativeLayout>
+        <ImageView
+            android:id="@+id/iv_heart"
+            android:layout_width="35dp"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/btn_addFav"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:elevation="2dp"
+            android:src="@drawable/ic_favorite_border_black_48dp" />
 
-    </LinearLayout>
-
+    </RelativeLayout>
 
 
 </LinearLayout>

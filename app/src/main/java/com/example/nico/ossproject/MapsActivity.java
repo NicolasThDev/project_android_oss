@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import com.example.nico.ossproject.bean.PolygonArea;
+import com.example.nico.ossproject.bean.beanServer.Spot;
 import com.example.nico.ossproject.bean.beanUtils.MapUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -17,6 +18,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polygon;
+
+import java.util.ArrayList;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnPolygonClickListener, View.OnClickListener {
 
@@ -128,9 +131,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 getResources().getColor(R.color.area4))
                 .createPolygon());
 
+        if (getIntent().getParcelableArrayListExtra("spots") != null){
+            ArrayList<Spot> spotArrayList = getIntent().getParcelableArrayListExtra("spots");
+            MapUtils.spotsZoomIn(spotArrayList, mMap);
+        } else {
+            LatLng bretagne = new LatLng(48.25, -4);
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(bretagne, 7));
+        }
 
-        LatLng bretagne = new LatLng(48.25, -4);
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(bretagne, 7));
         mMap.setOnPolygonClickListener(this);
     }
 

@@ -15,8 +15,9 @@
     <color name="area2btn">#78ff6666</color>
     <color name="area3btn">#b433cc00</color>
     <color name="area4btn">#466633ff</color>
+    <color name="textGrey">#a4a4a4</color>
 
-
+    <color name="transparent">#00f44336</color>
     <color name="red">#f44336</color>
 
 </resources>
