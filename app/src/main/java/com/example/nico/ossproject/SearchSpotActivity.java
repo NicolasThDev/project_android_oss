@@ -3,13 +3,15 @@ package com.example.nico.ossproject;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.support.v7.app.AppCompatActivity;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +24,8 @@ import android.widget.ImageView;
 
 import com.example.nico.ossproject.bean.ColorProject;
 import com.example.nico.ossproject.bean.beanServer.Spot;
+import com.example.nico.ossproject.bean.beanUtils.WSUtils;
+import com.example.nico.ossproject.controller.MyApplication;
 import com.example.nico.ossproject.view.SpotListAdapter;
 
 import java.util.ArrayList;
@@ -87,8 +91,9 @@ public class SearchSpotActivity extends AppCompatActivity implements View.OnClic
                     spotListMap.add(spotListAdapter.getFilterSpotArrayList().get(i));
                 }
             }
+            String jsonSpots = MyApplication.gson.toJson(spotListMap);
             Intent intent = new Intent(this, MapsActivity.class);
-            intent.putParcelableArrayListExtra("spots", spotListMap);
+            intent.putExtra("spots", jsonSpots);
             startActivity(intent);
         } else if (v == btnSearch ) {
             spotListAdapter.setFilter(et_search.getText().toString());
@@ -99,30 +104,48 @@ public class SearchSpotActivity extends AppCompatActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_spot);
-        findViews();
         spotArrayList = new ArrayList<>();
+        AT at = new AT();
+        at.execute();
+        findViews();
 
-        Spot spot1 = new Spot("Bénodet Letty");
-        spot1.setLatittude(47.861);
-        spot1.setLongitude(-4.088);
-        spot1.setSpotAcces(3);
-        spot1.setSpotType("Port");
 
-        Spot spot2 = new Spot("Bénodet chenal");
-        spot2.setLatittude(47.863);
-        spot2.setLongitude(-4.107);
-        spot2.setSpotAcces(5);
-        spot2.setSpotType("Mer");
-
-        Spot spot3 = new Spot("Bénodet plage");
-        spot3.setLatittude(47.871);
-        spot3.setLongitude(-4.110);
-        spot3.setSpotAcces(1);
-        spot3.setSpotType("Plage");
-
-        spotArrayList.add(spot1);
-        spotArrayList.add(spot2);
-        spotArrayList.add(spot3);
+//        ArrayList<FishInSpot> fishInSpotArrayList = new ArrayList<>();
+//        Fish fish = new Fish();
+//        fish.setFishName("bar");
+//
+//        Spot spot1 = new Spot("Bénodet Letty");
+//        for (int i =0; i<30; i++){
+//            FishInSpot fishInSpot = new FishInSpot();
+//            fishInSpot.setAttitude(4);
+//            fishInSpot.setExistence(2);
+//            fishInSpot.setSize(5);
+//            fishInSpot.setFish(fish);
+//            fishInSpot.setSpot(spot1);
+//            fishInSpotArrayList.add(fishInSpot);
+//        }
+//
+//        spot1.setFish_in_spot(fishInSpotArrayList);
+//        spot1.setLatittude(47.861);
+//        spot1.setLongitude(-4.088);
+//        spot1.setSpot_acces(3);
+//        spot1.setSpot_type("Port");
+//
+//        Spot spot2 = new Spot("Bénodet chenal");
+//        spot2.setLatittude(47.863);
+//        spot2.setLongitude(-4.107);
+//        spot2.setSpot_acces(5);
+//        spot2.setSpot_type("Mer");
+//
+//        Spot spot3 = new Spot("Bénodet plage");
+//        spot3.setLatittude(47.871);
+//        spot3.setLongitude(-4.110);
+//        spot3.setSpot_acces(1);
+//        spot3.setSpot_type("Plage");
+//
+//        spotArrayList.add(spot1);
+//        spotArrayList.add(spot2);
+//        spotArrayList.add(spot3);
 
         spotListAdapter = new SpotListAdapter(spotArrayList, this);
         recyclerView.setAdapter(spotListAdapter);
@@ -166,20 +189,52 @@ public class SearchSpotActivity extends AppCompatActivity implements View.OnClic
     public void onSpotMapClick(Spot spot) {
         spotListMap = new ArrayList<>();
         spotListMap.add(spot);
+        String jsonSpots = MyApplication.gson.toJson(spotListMap);
         Intent intent = new Intent(this, MapsActivity.class);
-        intent.putParcelableArrayListExtra("spots", spotListMap);
+        intent.putExtra("spots", jsonSpots);
         startActivity(intent);
     }
 
     @Override
     public void onSpotDetailClick(Spot spot) {
+        String jsonSpot = MyApplication.gson.toJson(spot);
         Intent intent = new Intent(this, DetailSpotActivity.class);
-        intent.putExtra("spot", spot);
+        intent.putExtra("spot", jsonSpot);
         startActivity(intent);
     }
 
     @Override
     public void onSpotFavoriteClick(Spot spot) {
 
+    }
+
+    public class AT extends AsyncTask{
+
+        private ArrayList<Spot> temp;
+
+        @Override
+        protected Object doInBackground(Object[] params) {
+            try {
+                temp = WSUtils.getAllSpots();
+                Log.w("tag", "temp size : " + temp.size() );
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return temp;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
+            if (temp != null){
+                spotArrayList.clear();
+                spotArrayList.addAll(temp);
+                Log.w("tag", "spotList size : " + spotArrayList.size() );
+                spotListAdapter.applyFilter();
+            } else{
+                Log.w("tag", "la liste recu est null");
+            }
+
+        }
     }
 }

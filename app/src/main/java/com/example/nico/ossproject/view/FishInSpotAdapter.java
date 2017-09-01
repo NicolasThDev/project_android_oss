@@ -4,8 +4,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -16,13 +14,15 @@ import com.example.nico.ossproject.bean.beanServer.FishInSpot;
 
 import java.util.ArrayList;
 
-/**
- * Created by nico on 31/08/2017.
- */
+
 
 public class FishInSpotAdapter extends RecyclerView.Adapter<FishInSpotAdapter.ViewHolder> {
 
     private ArrayList<FishInSpot> fishInSpotArrayList;
+
+    public FishInSpotAdapter(ArrayList<FishInSpot> fishInSpotArrayList) {
+        this.fishInSpotArrayList = fishInSpotArrayList;
+    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -31,10 +31,31 @@ public class FishInSpotAdapter extends RecyclerView.Adapter<FishInSpotAdapter.Vi
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        FishInSpot fishInSpot = fishInSpotArrayList.get(position);
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
+        final FishInSpot fishInSpot = fishInSpotArrayList.get(position);
         Glide.with(holder.iv_pictureFish.getContext()).load("https://www.msc.org/multimedia-fr/images-fr/especes-certifiees/bar").into(holder.iv_pictureFish);
+        holder.rb_size.setRating(fishInSpot.getSize());
+        holder.rb_curiosity.setRating(fishInSpot.getAttitude());
+        holder.rb_presence.setRating(fishInSpot.getExistence());
+        if (fishInSpot.getFish() != null){
+            holder.tv_fishName.setText(fishInSpot.getFish().getFishName());
+        }
 
+        holder.detailFish.setVisibility(fishInSpot.isVisible() ? View.VISIBLE :  View.GONE);
+        holder.root.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fishInSpot.setVisible(!fishInSpot.isVisible());
+                for(int i =0; i< fishInSpotArrayList.size(); i++) {
+                    FishInSpot f = fishInSpotArrayList.get(i);
+                    if(f != fishInSpot && f.isVisible()) {
+                        f.setVisible(false);
+                        notifyItemChanged(i);
+                    }
+                }
+                notifyItemChanged(position);
+            }
+        });
     }
 
     @Override
@@ -44,10 +65,13 @@ public class FishInSpotAdapter extends RecyclerView.Adapter<FishInSpotAdapter.Vi
 
     protected static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView tv_fishName;
+        public View root, detailFish;
         public ImageView iv_pictureFish;
         public RatingBar rb_size, rb_curiosity, rb_presence;
         public ViewHolder(View itemView) {
             super(itemView);
+            root = itemView.findViewById(R.id.root);
+            detailFish = itemView.findViewById(R.id.detailFish);
             iv_pictureFish = (ImageView) itemView.findViewById(R.id.iv_pictureFish);
             rb_size = (RatingBar) itemView.findViewById(R.id.rb_size);
             rb_curiosity = (RatingBar) itemView.findViewById(R.id.rb_curiosity);

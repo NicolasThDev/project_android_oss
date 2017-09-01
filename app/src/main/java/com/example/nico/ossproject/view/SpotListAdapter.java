@@ -103,10 +103,13 @@ public class SpotListAdapter extends RecyclerView.Adapter<SpotListAdapter.ViewHo
     public void applyFilter() {
         filterSpotArrayList.clear();
         for(Spot spot : spotArrayList) {
-                if (spot.getName().toLowerCase().contains(filter)) {
-                    filterSpotArrayList.add(spot);
-                }
+            if (filter == null){
+                filterSpotArrayList.add(spot);
             }
+            else if (spot.getName().toLowerCase().contains(filter)) {
+                filterSpotArrayList.add(spot);
+            }
+        }
 
         notifyDataSetChanged();
     }

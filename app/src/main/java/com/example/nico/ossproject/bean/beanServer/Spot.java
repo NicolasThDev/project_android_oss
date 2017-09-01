@@ -1,11 +1,8 @@
 package com.example.nico.ossproject.bean.beanServer;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import java.util.ArrayList;
 
-public class Spot implements Parcelable {
+public class Spot {
 
 
     ////////////////////////
@@ -13,15 +10,15 @@ public class Spot implements Parcelable {
     ////////////////////////
     private int id;
     private String name;
-    private String spotType;
-    private int spotAcces;
-    private long dateAdd;
+    private String spot_type;
+    private int spot_acces;
+    private long date_add;
     private double latittude;
     private double longitude;
     private Area area;
     private ArrayList<Comment> comment;
-    private SiteUser siteUser;
-    private ArrayList<FishInSpot> fishInSpot;
+    private SiteUser site_user;
+    private ArrayList<FishInSpot> fish_in_spot;
 
     private boolean selected;
 
@@ -53,28 +50,28 @@ public class Spot implements Parcelable {
         this.name = name;
     }
 
-    public String getSpotType() {
-        return spotType;
+    public String getSpot_type() {
+        return spot_type;
     }
 
-    public void setSpotType(String spotType) {
-        this.spotType = spotType;
+    public void setSpot_type(String spot_type) {
+        this.spot_type = spot_type;
     }
 
-    public int getSpotAcces() {
-        return spotAcces;
+    public int getSpot_acces() {
+        return spot_acces;
     }
 
-    public void setSpotAcces(int spotAcces) {
-        this.spotAcces = spotAcces;
+    public void setSpot_acces(int spot_acces) {
+        this.spot_acces = spot_acces;
     }
 
-    public long getDateAdd() {
-        return dateAdd;
+    public long getDate_add() {
+        return date_add;
     }
 
-    public void setDateAdd(long dateAdd) {
-        this.dateAdd = dateAdd;
+    public void setDate_add(long date_add) {
+        this.date_add = date_add;
     }
 
     public double getLatittude() {
@@ -109,20 +106,20 @@ public class Spot implements Parcelable {
         this.comment = comment;
     }
 
-    public SiteUser getSiteUser() {
-        return siteUser;
+    public SiteUser getSite_user() {
+        return site_user;
     }
 
-    public void setSiteUser(SiteUser siteUser) {
-        this.siteUser = siteUser;
+    public void setSite_user(SiteUser site_user) {
+        this.site_user = site_user;
     }
 
-    public ArrayList<FishInSpot> getFishInSpot() {
-        return fishInSpot;
+    public ArrayList<FishInSpot> getFish_in_spot() {
+        return fish_in_spot;
     }
 
-    public void setFishInSpot(ArrayList<FishInSpot> fishInSpot) {
-        this.fishInSpot = fishInSpot;
+    public void setFish_in_spot(ArrayList<FishInSpot> fish_in_spot) {
+        this.fish_in_spot = fish_in_spot;
     }
 
     public boolean isSelected() {
@@ -132,73 +129,4 @@ public class Spot implements Parcelable {
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
-
-    protected Spot(Parcel in) {
-        id = in.readInt();
-        name = in.readString();
-        spotType = in.readString();
-        spotAcces = in.readInt();
-        dateAdd = in.readLong();
-        latittude = in.readDouble();
-        longitude = in.readDouble();
-        area = (Area) in.readValue(Area.class.getClassLoader());
-        if (in.readByte() == 0x01) {
-            comment = new ArrayList<Comment>();
-            in.readList(comment, Comment.class.getClassLoader());
-        } else {
-            comment = null;
-        }
-        siteUser = (SiteUser) in.readValue(SiteUser.class.getClassLoader());
-        if (in.readByte() == 0x01) {
-            fishInSpot = new ArrayList<FishInSpot>();
-            in.readList(fishInSpot, FishInSpot.class.getClassLoader());
-        } else {
-            fishInSpot = null;
-        }
-        selected = in.readByte() != 0x00;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
-        dest.writeString(name);
-        dest.writeString(spotType);
-        dest.writeInt(spotAcces);
-        dest.writeLong(dateAdd);
-        dest.writeDouble(latittude);
-        dest.writeDouble(longitude);
-        dest.writeValue(area);
-        if (comment == null) {
-            dest.writeByte((byte) (0x00));
-        } else {
-            dest.writeByte((byte) (0x01));
-            dest.writeList(comment);
-        }
-        dest.writeValue(siteUser);
-        if (fishInSpot == null) {
-            dest.writeByte((byte) (0x00));
-        } else {
-            dest.writeByte((byte) (0x01));
-            dest.writeList(fishInSpot);
-        }
-        dest.writeByte((byte) (selected ? 0x01 : 0x00));
-    }
-
-    @SuppressWarnings("unused")
-    public static final Parcelable.Creator<Spot> CREATOR = new Parcelable.Creator<Spot>() {
-        @Override
-        public Spot createFromParcel(Parcel in) {
-            return new Spot(in);
-        }
-
-        @Override
-        public Spot[] newArray(int size) {
-            return new Spot[size];
-        }
-    };
 }

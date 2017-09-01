@@ -3,10 +3,11 @@ package com.example.nico.ossproject.controller;
 import android.app.Application;
 
 import com.example.nico.ossproject.bean.ColorProject;
+import com.google.gson.Gson;
 
 public class MyApplication extends Application {
 
-
+    public static Gson gson;
 
 
 
@@ -18,6 +19,7 @@ public class MyApplication extends Application {
         instance = this;
         super.onCreate();
         ColorProject.init();
+        gson = new Gson();
     }
 
     public static MyApplication getInstance() {
