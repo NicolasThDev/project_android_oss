@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://C:\Users\Nico\Documents\Developpement\Projet OSS\projet_oss_android\OssProject.iml" filepath="C:\Users\Nico\Documents\Developpement\Projet OSS\projet_oss_android\OssProject.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OssProject.iml" filepath="$PROJECT_DIR$/OssProject.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/projet_oss_android.iml" filepath="$PROJECT_DIR$/projet_oss_android.iml" />
     </modules>
