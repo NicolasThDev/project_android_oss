@@ -79,11 +79,11 @@ public class DetailSpotActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case 4:
+            case 3:
                 Intent intentSearch = new Intent(this, SearchSpotActivity.class);
                 startActivity(intentSearch);
                 break;
-            case 3:
+            case 4:
                 Intent intentMap = new Intent(this, MapsActivity.class);
                 startActivity(intentMap);
                 break;

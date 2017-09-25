@@ -3,6 +3,7 @@ package com.example.nico.ossproject;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -136,8 +137,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         String jsonSpots = getIntent().getStringExtra("spots");
         if (jsonSpots != null){
-            ArrayList<Spot> spotArrayList = MyApplication.gson.fromJson(jsonSpots, new TypeToken<ArrayList<Spot>>(){}.getType());
-            MapUtils.spotsZoomIn(spotArrayList, mMap);
+            final ArrayList<Spot> spotArrayList = MyApplication.gson.fromJson(jsonSpots, new TypeToken<ArrayList<Spot>>(){}.getType());
+            mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback(){
+                @Override
+                public void onMapLoaded() {
+                    MapUtils.spotsZoomIn(spotArrayList, mMap);
+                }
+            });
         } else {
             LatLng bretagne = new LatLng(48.25, -4);
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(bretagne, 7));
@@ -156,6 +162,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             MapUtils.polygonZoomIn(polygonArea3, mMap);
         } else  if (polygon.equals(polygonArea4)){
             MapUtils.polygonZoomIn(polygonArea4, mMap);
+        }
+    }
+
+    class AT extends AsyncTask{
+
+        @Override
+        protected Object doInBackground(Object[] params) {
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
         }
     }
 }

@@ -112,7 +112,7 @@ public class SearchSpotActivity extends AppCompatActivity implements View.OnClic
 
 //        ArrayList<FishInSpot> fishInSpotArrayList = new ArrayList<>();
 //        Fish fish = new Fish();
-//        fish.setFishName("bar");
+//        fish.setFish_name("bar");
 //
 //        Spot spot1 = new Spot("Bénodet Letty");
 //        for (int i =0; i<30; i++){
@@ -126,19 +126,19 @@ public class SearchSpotActivity extends AppCompatActivity implements View.OnClic
 //        }
 //
 //        spot1.setFish_in_spot(fishInSpotArrayList);
-//        spot1.setLatittude(47.861);
+//        spot1.setLattitude(47.861);
 //        spot1.setLongitude(-4.088);
 //        spot1.setSpot_acces(3);
 //        spot1.setSpot_type("Port");
 //
 //        Spot spot2 = new Spot("Bénodet chenal");
-//        spot2.setLatittude(47.863);
+//        spot2.setLattitude(47.863);
 //        spot2.setLongitude(-4.107);
 //        spot2.setSpot_acces(5);
 //        spot2.setSpot_type("Mer");
 //
 //        Spot spot3 = new Spot("Bénodet plage");
-//        spot3.setLatittude(47.871);
+//        spot3.setLattitude(47.871);
 //        spot3.setLongitude(-4.110);
 //        spot3.setSpot_acces(1);
 //        spot3.setSpot_type("Plage");
@@ -190,6 +190,7 @@ public class SearchSpotActivity extends AppCompatActivity implements View.OnClic
         spotListMap = new ArrayList<>();
         spotListMap.add(spot);
         String jsonSpots = MyApplication.gson.toJson(spotListMap);
+//        Log.w("tag", jsonSpots);
         Intent intent = new Intent(this, MapsActivity.class);
         intent.putExtra("spots", jsonSpots);
         startActivity(intent);

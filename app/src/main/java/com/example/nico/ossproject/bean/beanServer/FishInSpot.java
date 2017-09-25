@@ -1,14 +1,12 @@
 package com.example.nico.ossproject.bean.beanServer;
 
-import android.os.Parcelable;
-
 public class FishInSpot {
     private int id;
     private int size;
     private int attitude;
     private int existence;
     private transient Spot spot;
-    private SiteUser siteUser;
+    private SiteUser site_user;
     private Fish fish;
     private transient boolean visible;
 
@@ -60,12 +58,12 @@ public class FishInSpot {
         this.spot = spot;
     }
 
-    public SiteUser getSiteUser() {
-        return siteUser;
+    public SiteUser getSite_user() {
+        return site_user;
     }
 
-    public void setSiteUser(SiteUser siteUser) {
-        this.siteUser = siteUser;
+    public void setSite_user(SiteUser site_user) {
+        this.site_user = site_user;
     }
 
     public Fish getFish() {

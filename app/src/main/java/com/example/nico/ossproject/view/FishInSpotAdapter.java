@@ -33,12 +33,12 @@ public class FishInSpotAdapter extends RecyclerView.Adapter<FishInSpotAdapter.Vi
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final FishInSpot fishInSpot = fishInSpotArrayList.get(position);
-        Glide.with(holder.iv_pictureFish.getContext()).load("https://www.msc.org/multimedia-fr/images-fr/especes-certifiees/bar").into(holder.iv_pictureFish);
         holder.rb_size.setRating(fishInSpot.getSize());
         holder.rb_curiosity.setRating(fishInSpot.getAttitude());
         holder.rb_presence.setRating(fishInSpot.getExistence());
         if (fishInSpot.getFish() != null){
-            holder.tv_fishName.setText(fishInSpot.getFish().getFishName());
+            Glide.with(holder.iv_pictureFish.getContext()).load(fishInSpot.getFish().getPicture()).into(holder.iv_pictureFish);
+            holder.tv_fishName.setText(fishInSpot.getFish().getFish_name());
         }
 
         holder.detailFish.setVisibility(fishInSpot.isVisible() ? View.VISIBLE :  View.GONE);

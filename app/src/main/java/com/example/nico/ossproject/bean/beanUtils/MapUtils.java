@@ -29,7 +29,7 @@ public class MapUtils {
     public static void spotsZoomIn(ArrayList<Spot> spotArrayList, GoogleMap googleMap){
         LatLngBounds.Builder latLngBounds = new LatLngBounds.Builder();
         for (Spot spot : spotArrayList){
-            LatLng latLng = new LatLng(spot.getLatittude(), spot.getLongitude());
+            LatLng latLng = new LatLng(spot.getLattitude(), spot.getLongitude());
             latLngBounds.include(latLng);
             googleMap.addMarker(new MarkerOptions().position(latLng).title(spot.getName())).setTag(spot);
         }

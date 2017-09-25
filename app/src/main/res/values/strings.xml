@@ -13,8 +13,8 @@
     <string name="action">Action</string>
     <string name="acces">Access :</string>
     <string name="Fish">Fish</string>
-    <string name="type">Type :</string>
-    <string name="size">Size :</string>
+    <string name="type">Type : </string>
+    <string name="size">Size : </string>
     <string name="curiosity">Curiosity :</string>
     <string name="presence">Presence :</string>
     <string name="title_activity_login">Sign in</string>
