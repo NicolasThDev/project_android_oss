@@ -49,6 +49,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         area2.setOnClickListener( this );
         area3.setOnClickListener( this );
         area4.setOnClickListener( this );
+
+        markerArrayList = new ArrayList<>();
     }
 
     private void clearMarker(){
@@ -57,28 +59,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    private void clickOnArea(int at, Polygon polygon){
+        clearMarker();
+        AT asyncTask = new AT(at);
+        asyncTask.execute();
+        MapUtils.polygonZoomIn(polygon, mMap);
+    }
+
     @Override
     public void onClick(View v) {
         if ( v == area1 ) {
-            clearMarker();
-            AT at = new AT(1);
-            at.execute();
-            MapUtils.polygonZoomIn(polygonArea1, mMap);
+            clickOnArea(1, polygonArea1); // click on an area, launch asyntask and zoom on polygon
         } else if ( v == area2 ) {
-            clearMarker();
-            AT at = new AT(2);
-            at.execute();
-            MapUtils.polygonZoomIn(polygonArea2, mMap);
+            clickOnArea(2, polygonArea2);
         } else if ( v == area3 ) {
-            clearMarker();
-            AT at = new AT(3);
-            at.execute();
-            MapUtils.polygonZoomIn(polygonArea3, mMap);
+            clickOnArea(3, polygonArea3);
         } else if ( v == area4 ) {
-            clearMarker();
-            AT at = new AT(4);
-            at.execute();
-            MapUtils.polygonZoomIn(polygonArea4, mMap);
+            clickOnArea(4, polygonArea4);
         }
     }
 
@@ -86,25 +83,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        findViews();
+        findViews(); // init component
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        markerArrayList = new ArrayList<>();
 
         Toast.makeText(this, "Pseudo : " + SharedPreferenceUtils.getUser().getLast_name(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0,1,0, R.string.myAccount);
-        menu.add(0,2,0, R.string.disconnect);
-        Drawable searchIcon = getDrawable(android.R.drawable.ic_search_category_default);
-        searchIcon.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_IN);
-
+        Drawable searchIcon = getDrawable(android.R.drawable.ic_search_category_default); //  get icon
+        searchIcon.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_IN); // change color filter
         Drawable mapIcon = getDrawable(android.R.drawable.ic_dialog_map);
         mapIcon.setColorFilter(getResources().getColor(R.color.colorPrimaryDark), PorterDuff.Mode.SRC_IN);
 
+        menu.add(0,1,0, R.string.myAccount);
+        menu.add(0,2,0, R.string.disconnect);
         menu.add(0,3,0, R.string.search).setIcon(searchIcon).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         menu.add(0,4,0, R.string.map).setIcon(mapIcon).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
@@ -134,8 +129,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        //-----------------
         // Test polygone
-
+        //-------------------------------------------------
         polygonArea2 = mMap.addPolygon(new PolygonArea(
                 new LatLng(47.238, -3.879),
                 new LatLng(47.950, -3.879),
@@ -168,52 +164,31 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 getResources().getColor(R.color.colorPrimary),
                 getResources().getColor(R.color.area4))
                 .createPolygon());
+        // ------------------------------------------------------------
 
-        // récupération de la liste de spot à afficher
-        String jsonSpots = getIntent().getStringExtra("spots");
-
-        if (jsonSpots != null){ // si elle contient des spots
-            // on efface tous les markers
-            clearMarker();
-            // on converti le json en objet
-            ArrayList<Spot> spotArrayList = MyApplication.gson.fromJson(
-                                                jsonSpots,
-                                                new TypeToken<ArrayList<Spot>>(){}.getType()
-                                            );
-            markerArrayList.clear();
-            // on zoom sur les markers de spot et on les ajoute à la liste de markers
-            markerArrayList.addAll(MapUtils.spotsZoomIn(spotArrayList, mMap));
-        } else { // si elle est null
-            // on se place sur la bretagne
+        String jsonSpots = getIntent().getStringExtra("spots");// get spot list to display
+        if (jsonSpots != null){
+            clearMarker();// clean all markers on map
+            ArrayList<Spot> spotArrayList = MyApplication.gson.fromJson(jsonSpots,new TypeToken<ArrayList<Spot>>(){}.getType());// convert json to list of spot
+            markerArrayList.clear(); // clear markers list
+            markerArrayList.addAll(MapUtils.spotsZoomIn(spotArrayList, mMap));// zoom on spot marker and add them in markers list
+        } else {
             LatLng bretagne = new LatLng(48.25, -4);
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(bretagne, 7));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(bretagne, 7));// move camera on Bretagne
         }
-
-        mMap.setOnPolygonClickListener(this);
+        mMap.setOnPolygonClickListener(this); // add listener on polygon
     }
 
     @Override
     public void onPolygonClick(Polygon polygon) {
         if (polygon.equals(polygonArea1)){
-            clearMarker();
-            AT at = new AT(1);
-            at.execute();
-            MapUtils.polygonZoomIn(polygonArea1, mMap);
+            clickOnArea(1, polygonArea1); // click on an area, launch asyntask and zoom on polygon
         } else if (polygon.equals(polygonArea2)){
-            clearMarker();
-            AT at = new AT(2);
-            at.execute();
-            MapUtils.polygonZoomIn(polygonArea2, mMap);
+            clickOnArea(2, polygonArea2);
         } else  if (polygon.equals(polygonArea3)){
-            clearMarker();
-            AT at = new AT(3);
-            at.execute();
-            MapUtils.polygonZoomIn(polygonArea3, mMap);
+            clickOnArea(3, polygonArea3);
         } else  if (polygon.equals(polygonArea4)){
-            clearMarker();
-            AT at = new AT(4);
-            at.execute();
-            MapUtils.polygonZoomIn(polygonArea4, mMap);
+            clickOnArea(4, polygonArea4);
         }
     }
 
@@ -228,9 +203,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         @Override
-        protected Object doInBackground(Object[] params) {
+        protected ArrayList<Spot> doInBackground(Object[] params) {
             try {
-                temp = WSUtils.getSpotInArea(areaId);
+                temp = WSUtils.getSpotInArea(areaId); // load spots to server
                 Log.w("tag", "temp size : " + temp.size() );
             } catch (Exception e) {
                 e.printStackTrace();
@@ -241,13 +216,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
-            if (temp != null){
+            if (o != null){
+                temp = (ArrayList<Spot>) o;
 
-                markerArrayList.clear();
+                markerArrayList.clear(); // clear markers list
                 for (Spot spot : temp){
-                    Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(spot.getLattitude(), spot.getLongitude())).title(spot.getName()));
-                    marker.setTag(spot);
-                    markerArrayList.add(marker);
+                    Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(spot.getLattitude(), spot.getLongitude())).title(spot.getName())); // marker on map
+                    marker.setTag(spot); // attribute spot to a marker
+                    markerArrayList.add(marker); // add marker in the list
                 }
             } else{
                 Log.w("tag", "la liste recu est null");
