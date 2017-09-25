@@ -5,6 +5,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 
@@ -26,14 +27,19 @@ public class MapUtils {
         googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds.build(), padding));
     }
 
-    public static void spotsZoomIn(ArrayList<Spot> spotArrayList, GoogleMap googleMap){
+    public static ArrayList<Marker> spotsZoomIn(ArrayList<Spot> spotArrayList, GoogleMap googleMap){
+        ArrayList<Marker> markerArrayList = new ArrayList<>();
         LatLngBounds.Builder latLngBounds = new LatLngBounds.Builder();
         for (Spot spot : spotArrayList){
-            LatLng latLng = new LatLng(spot.getLatittude(), spot.getLongitude());
+            LatLng latLng = new LatLng(spot.getLattitude(), spot.getLongitude());
             latLngBounds.include(latLng);
-            googleMap.addMarker(new MarkerOptions().position(latLng).title(spot.getName())).setTag(spot);
+            Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng).title(spot.getName()));
+            marker.setTag(spot);
+            markerArrayList.add(marker);
+
         }
         int padding = 300; // offset from edges of the map in pixels
         googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds.build(), padding));
+        return markerArrayList;
     }
 }

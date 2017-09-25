@@ -13,7 +13,7 @@ public class Spot {
     private String spot_type;
     private int spot_acces;
     private long date_add;
-    private double latittude;
+    private double lattitude;
     private double longitude;
     private Area area;
     private ArrayList<Comment> comment;
@@ -74,12 +74,12 @@ public class Spot {
         this.date_add = date_add;
     }
 
-    public double getLatittude() {
-        return latittude;
+    public double getLattitude() {
+        return lattitude;
     }
 
-    public void setLatittude(double latittude) {
-        this.latittude = latittude;
+    public void setLattitude(double lattitude) {
+        this.lattitude = lattitude;
     }
 
     public double getLongitude() {

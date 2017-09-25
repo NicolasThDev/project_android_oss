@@ -3,21 +3,20 @@ package com.example.nico.ossproject;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
-
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -28,6 +27,10 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.example.nico.ossproject.bean.beanServer.SiteUser;
+import com.example.nico.ossproject.bean.beanUtils.SharedPreferenceUtils;
+import com.example.nico.ossproject.bean.beanUtils.WSUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,9 +65,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mProgressView;
     private View mLoginFormView;
 
+    protected void launchNextActivity(){
+        Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (SharedPreferenceUtils.getUser() != null){
+            Intent intent = new Intent(this, MapsActivity.class);
+            startActivity(intent);
+        }
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -197,7 +211,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return password.length() > 2;
     }
 
     /**
@@ -298,6 +312,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         private final String mEmail;
         private final String mPassword;
+        private SiteUser siteUser;
 
         UserLoginTask(String email, String password) {
             mEmail = email;
@@ -307,11 +322,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
-
             try {
-                // Simulate network access.
-                Thread.sleep(2000);
+                siteUser = WSUtils.loginAppServer(mEmail, mPassword);
             } catch (InterruptedException e) {
+                return false;
+            } catch (Exception e) {
+                e.printStackTrace();
                 return false;
             }
 
@@ -323,8 +339,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 }
             }
 
-            // TODO: register the new account here.
-            return true;
+            if (siteUser != null){
+                return true;
+            } else {
+                return false;
+            }
         }
 
         @Override
@@ -333,7 +352,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
-                finish();
+                SharedPreferenceUtils.saveUser(siteUser);
+                launchNextActivity();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();

@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 public class Fish{
     private int id;
-    private String wikiLink;
+    private String wiki_link;
     private String picture;
-    private String fishName;
-    private SiteUser siteUser;
+    private String fish_name;
+    private SiteUser site_user;
     private ArrayList<FishInSpot> fishInSpotArrayList;
 
     public Fish() {
@@ -26,12 +26,12 @@ public class Fish{
         this.id = id;
     }
 
-    public String getWikiLink() {
-        return wikiLink;
+    public String getWiki_link() {
+        return wiki_link;
     }
 
-    public void setWikiLink(String wikiLink) {
-        this.wikiLink = wikiLink;
+    public void setWiki_link(String wiki_link) {
+        this.wiki_link = wiki_link;
     }
 
     public String getPicture() {
@@ -42,20 +42,20 @@ public class Fish{
         this.picture = picture;
     }
 
-    public String getFishName() {
-        return fishName;
+    public String getFish_name() {
+        return fish_name;
     }
 
-    public void setFishName(String fishName) {
-        this.fishName = fishName;
+    public void setFish_name(String fish_name) {
+        this.fish_name = fish_name;
     }
 
-    public SiteUser getSiteUser() {
-        return siteUser;
+    public SiteUser getSite_user() {
+        return site_user;
     }
 
-    public void setSiteUser(SiteUser siteUser) {
-        this.siteUser = siteUser;
+    public void setSite_user(SiteUser site_user) {
+        this.site_user = site_user;
     }
 
     public ArrayList<FishInSpot> getFishInSpotArrayList() {

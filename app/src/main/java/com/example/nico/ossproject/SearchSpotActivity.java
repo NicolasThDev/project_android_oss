@@ -85,17 +85,21 @@ public class SearchSpotActivity extends AppCompatActivity implements View.OnClic
 
         } else if ( v == btnViewMap ) {
             spotListMap = new ArrayList<>();
-            spotListMap.clear();
-            for (int i = 0; i < spotListAdapter.getFilterSpotArrayList().size(); i++){
-                if (spotListAdapter.getFilterSpotArrayList().get(i).isSelected()){
-                    spotListMap.add(spotListAdapter.getFilterSpotArrayList().get(i));
+            // pour chaque spot selected, l'ajouter à la liste de spot à transmettre à l'activité map
+            for (Spot spot : spotListAdapter.getFilterSpotArrayList()){
+                if (spot.isSelected()){
+                    spotListMap.add(spot);
                 }
             }
+            // transformer en json la liste de spot
             String jsonSpots = MyApplication.gson.toJson(spotListMap);
+
+            // lancer la nouvelle activité avec la liste de spot
             Intent intent = new Intent(this, MapsActivity.class);
             intent.putExtra("spots", jsonSpots);
             startActivity(intent);
         } else if (v == btnSearch ) {
+            // filtrer la liste de spot
             spotListAdapter.setFilter(et_search.getText().toString());
         }
     }
@@ -112,7 +116,7 @@ public class SearchSpotActivity extends AppCompatActivity implements View.OnClic
 
 //        ArrayList<FishInSpot> fishInSpotArrayList = new ArrayList<>();
 //        Fish fish = new Fish();
-//        fish.setFishName("bar");
+//        fish.setFish_name("bar");
 //
 //        Spot spot1 = new Spot("Bénodet Letty");
 //        for (int i =0; i<30; i++){
@@ -126,19 +130,19 @@ public class SearchSpotActivity extends AppCompatActivity implements View.OnClic
 //        }
 //
 //        spot1.setFish_in_spot(fishInSpotArrayList);
-//        spot1.setLatittude(47.861);
+//        spot1.setLattitude(47.861);
 //        spot1.setLongitude(-4.088);
 //        spot1.setSpot_acces(3);
 //        spot1.setSpot_type("Port");
 //
 //        Spot spot2 = new Spot("Bénodet chenal");
-//        spot2.setLatittude(47.863);
+//        spot2.setLattitude(47.863);
 //        spot2.setLongitude(-4.107);
 //        spot2.setSpot_acces(5);
 //        spot2.setSpot_type("Mer");
 //
 //        Spot spot3 = new Spot("Bénodet plage");
-//        spot3.setLatittude(47.871);
+//        spot3.setLattitude(47.871);
 //        spot3.setLongitude(-4.110);
 //        spot3.setSpot_acces(1);
 //        spot3.setSpot_type("Plage");
@@ -197,9 +201,13 @@ public class SearchSpotActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onSpotDetailClick(Spot spot) {
+        // conversion de l'objet en json
         String jsonSpot = MyApplication.gson.toJson(spot);
+        // creation de l'intent pour l'activity
         Intent intent = new Intent(this, DetailSpotActivity.class);
+        // ajout du spot en l'extra dans l'intent
         intent.putExtra("spot", jsonSpot);
+        // lancement de l'ac
         startActivity(intent);
     }
 
@@ -208,7 +216,7 @@ public class SearchSpotActivity extends AppCompatActivity implements View.OnClic
 
     }
 
-    public class AT extends AsyncTask{
+    protected class AT extends AsyncTask{
 
         private ArrayList<Spot> temp;
 
