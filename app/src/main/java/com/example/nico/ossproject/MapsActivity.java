@@ -26,6 +26,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.nico.ossproject.bean.PolygonArea;
+import com.example.nico.ossproject.bean.beanServer.Area;
 import com.example.nico.ossproject.bean.beanServer.Spot;
 import com.example.nico.ossproject.bean.beanUtils.MapUtils;
 import com.example.nico.ossproject.bean.beanUtils.SharedPreferenceUtils;
@@ -47,6 +48,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public final static int COARSE_LOCATION_REQ_CODE = 10;
 
+
+    //------------------
+    //  ENUM
+    //------------------
+    public enum AsyncType {
+        GET_ALL_SPOT,
+        GET_SPOTS_AREA,
+        GET_ALL_AREA
+    }
+
     //------------------
     //  ATTRIBUTES
     //------------------
@@ -58,59 +69,62 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ArrayList<Marker> markerArrayList;
     private LocationManager mlocationMgr;
     private Location myLocation;
+    private ArrayList<Area> areaArrayList;
+
     //------------------
     //  METHODS
     //------------------
     private void findViews() {
-        area1 = (Button)findViewById( R.id.area1 );
-        area2 = (Button)findViewById( R.id.area2 );
-        area3 = (Button)findViewById( R.id.area3 );
-        area4 = (Button)findViewById( R.id.area4 );
-        et_aroundMe = (EditText) findViewById( R.id.et_aroundMe );
+        area1 = (Button) findViewById(R.id.area1);
+        area2 = (Button) findViewById(R.id.area2);
+        area3 = (Button) findViewById(R.id.area3);
+        area4 = (Button) findViewById(R.id.area4);
+        et_aroundMe = (EditText) findViewById(R.id.et_aroundMe);
         btn_search = (ImageButton) findViewById(R.id.btn_search);
 
-        area1.setOnClickListener( this );
-        area2.setOnClickListener( this );
-        area3.setOnClickListener( this );
-        area4.setOnClickListener( this );
+        area1.setOnClickListener(this);
+        area2.setOnClickListener(this);
+        area3.setOnClickListener(this);
+        area4.setOnClickListener(this);
         btn_search.setOnClickListener(this);
 
         markerArrayList = new ArrayList<>();
+        areaArrayList = new ArrayList<>();
         myLocation = new Location("myLocation");
     }
 
-    private void clearMarker(){ // delete all marker on map
-        for (Marker marker : markerArrayList){
+    private void clearMarker() { // delete all marker on map
+        for (Marker marker : markerArrayList) {
             marker.remove();
         }
     }
 
-    private void clickOnArea(int at, Polygon polygon){ // click on an area, launch asyntask and zoom on polygon
+    private void clickOnArea(int at, Polygon polygon) { // click on an area, launch asyntask and zoom on polygon
         clearMarker();
         AT asyncTask = new AT(at);
         asyncTask.execute();
         MapUtils.polygonZoomIn(polygon, mMap);
     }
 
-    private void displaySpotAroundMe(ArrayList<Spot> listSpot){
+    private void displaySpotAroundMe(ArrayList<Spot> listSpot) {
         Log.w("tag", "displaySpotAroundMe");
 
         Location target = new Location("target");
         ArrayList<Spot> spots = new ArrayList<>();
-        for (Spot spot : listSpot){
+        for (Spot spot : listSpot) {
             target.setLatitude(spot.getLattitude());
             target.setLongitude(spot.getLongitude());
-            if(this.myLocation.distanceTo(target) < Integer.parseInt(et_aroundMe.getText().toString())*1000){
+            if (this.myLocation.distanceTo(target) < Integer.parseInt(et_aroundMe.getText().toString()) * 1000) {
                 spots.add(spot);
             }
         }
-        if (!spots.isEmpty()){
+        if (!spots.isEmpty()) {
             markerArrayList.clear();
             markerArrayList.addAll(MapUtils.spotsZoomIn(spots, mMap, this.myLocation));
 
             View view = this.getCurrentFocus();
-            if (view != null){
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
         } else {
@@ -123,21 +137,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     //------------------
     @Override
     public void onClick(View v) {
-        if ( v == area1 ) {
+        if (v == area1) {
             clickOnArea(1, polygonArea1);
-        } else if ( v == area2 ) {
+        } else if (v == area2) {
             clickOnArea(2, polygonArea2);
-        } else if ( v == area3 ) {
+        } else if (v == area3) {
             clickOnArea(3, polygonArea3);
-        } else if ( v == area4 ) {
+        } else if (v == area4) {
             clickOnArea(4, polygonArea4);
-        } else if(v == btn_search){
-            try{
+        } else if (v == btn_search) {
+            try {
                 Integer.parseInt(et_aroundMe.getText().toString());
                 ATallSpot at = new ATallSpot();
                 at.execute();
-            } catch (Exception e){
-                if (et_aroundMe.getText().length() < 1){
+            } catch (Exception e) {
+                if (et_aroundMe.getText().length() < 1) {
                     Toast.makeText(this, "Value is empty" + et_aroundMe.getText().toString(), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(this, "Wrong value : " + et_aroundMe.getText().toString(), Toast.LENGTH_SHORT).show();
@@ -156,7 +170,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         mlocationMgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Log.w("tag", "location ok");
         } else {
             Log.w("tag", "not ok location");
@@ -213,10 +227,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == COARSE_LOCATION_REQ_CODE){
-            if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+        if (requestCode == COARSE_LOCATION_REQ_CODE) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 // location enable
-                if(mMap != null){
+                if (mMap != null) {
                     mMap.setMyLocationEnabled(true);
                 }
             }
@@ -232,10 +246,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Drawable mapIcon = getDrawable(android.R.drawable.ic_dialog_map);
         mapIcon.setColorFilter(getResources().getColor(R.color.colorPrimaryDark), PorterDuff.Mode.SRC_IN);
 
-        menu.add(0,1,0, R.string.myAccount);
-        menu.add(0,2,0, R.string.disconnect);
-        menu.add(0,3,0, R.string.search).setIcon(searchIcon).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        menu.add(0,4,0, R.string.map).setIcon(mapIcon).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.add(0, 1, 0, R.string.myAccount);
+        menu.add(0, 2, 0, R.string.disconnect);
+        menu.add(0, 3, 0, R.string.search).setIcon(searchIcon).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.add(0, 4, 0, R.string.map).setIcon(mapIcon).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -243,15 +257,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch (item.getItemId()){
-            case 3:
+        switch (item.getItemId()) {
+            case 3: // when search menu item selected
                 Intent intent = new Intent(this, SearchSpotActivity.class);
                 startActivity(intent);
                 break;
-            case 2:
-                SharedPreferenceUtils.deleteUser();
+            case 2: // when disconnect menu item selected
+                SharedPreferenceUtils.deleteUser(); // delete user in shared preference
                 Intent intentLogin = new Intent(this, LoginActivity.class);
-                startActivity(intentLogin);
+                startActivity(intentLogin); // launch login activity
                 finish();
                 break;
         }
@@ -262,7 +276,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             // location enable
             mMap.setMyLocationEnabled(true);
         }
@@ -305,11 +319,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // ------------------------------------------------------------
 
         String jsonSpots = getIntent().getStringExtra("spots");// get spot list to display
-        if (jsonSpots != null){
+        if (jsonSpots != null) {
 
             clearMarker();// clean all markers on map
-            final ArrayList<Spot> spotArrayList = MyApplication.gson.fromJson(jsonSpots,new TypeToken<ArrayList<Spot>>(){}.getType());// convert json to list of spot
-            mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback(){
+            final ArrayList<Spot> spotArrayList = MyApplication.gson.fromJson(jsonSpots, new TypeToken<ArrayList<Spot>>() {
+            }.getType());// convert json to list of spot
+            mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
                 @Override
                 public void onMapLoaded() {
                     markerArrayList.clear(); // clear markers list
@@ -325,13 +340,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onPolygonClick(Polygon polygon) {
-        if (polygon.equals(polygonArea1)){
+        if (polygon.equals(polygonArea1)) {
             clickOnArea(1, polygonArea1); // click on an area, launch AsyncTask and zoom on polygon
-        } else if (polygon.equals(polygonArea2)){
+        } else if (polygon.equals(polygonArea2)) {
             clickOnArea(2, polygonArea2);
-        } else  if (polygon.equals(polygonArea3)){
+        } else if (polygon.equals(polygonArea3)) {
             clickOnArea(3, polygonArea3);
-        } else  if (polygon.equals(polygonArea4)){
+        } else if (polygon.equals(polygonArea4)) {
             clickOnArea(4, polygonArea4);
         }
     }
@@ -353,7 +368,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         protected ArrayList<Spot> doInBackground(Object[] params) {
             try {
                 temp = WSUtils.getSpotInArea(areaId); // load spots to server
-                Log.w("tag", "temp size : " + temp.size() );
+                Log.w("tag", "temp size : " + temp.size());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -363,16 +378,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
-            if (o != null){
+            if (o != null) {
                 temp = (ArrayList<Spot>) o;
 
                 markerArrayList.clear(); // clear markers list
-                for (Spot spot : temp){
+                for (Spot spot : temp) {
                     Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(spot.getLattitude(), spot.getLongitude())).title(spot.getName())); // marker on map
                     marker.setTag(spot); // attribute spot to a marker
                     markerArrayList.add(marker); // add marker in the list
                 }
-            } else{
+            } else {
                 Log.w("tag", "receive list is empty");
                 Toast.makeText(MapsActivity.this, "Error loading data", Toast.LENGTH_LONG).show();
             }
@@ -401,13 +416,110 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
-            if (o != null){
+            if (o != null) {
                 displaySpotAroundMe(temp);
-            } else{
+            } else {
                 Log.w("tag", "receive list is empty");
                 Toast.makeText(MapsActivity.this, "Error loading data", Toast.LENGTH_LONG).show();
             }
 
+        }
+    }
+
+    public class AsyncTaskUtils extends AsyncTask {
+
+        //------------------
+        //  ATTRIBUTES
+        //------------------
+        private AsyncType asyncType;
+        private int areaId;
+
+        //------------------
+        //  CONSTRUCTOR
+        //------------------
+        public AsyncTaskUtils(AsyncType asyncType) {
+            this.asyncType = asyncType;
+        }
+
+        public AsyncTaskUtils(AsyncType asyncType, int areaId) {
+            this.areaId = areaId;
+            this.asyncType = asyncType;
+        }
+
+
+        //------------------
+        //  OVERRIDES
+        //------------------
+        @Override
+        protected Object doInBackground(Object[] objects) {
+
+            Object temp = null;
+            switch (asyncType) {
+                case GET_ALL_SPOT:
+                    // LAUNCH REQUEST HERE !
+                    try {
+                        temp = WSUtils.getAllSpots();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case GET_ALL_AREA:
+                    // LAUNCH REQUEST HERE !
+                    try {
+                        temp = WSUtils.getAllAreas();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case GET_SPOTS_AREA:
+                    // LAUNCH REQUEST HERE !
+                    try {
+                        temp = WSUtils.getSpotInArea(areaId); // load spots to server
+//                        Log.w("tag", "temp size : " + temp.size() );
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                default:
+                    temp = null;
+                    break;
+            }
+            return temp;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
+            switch (asyncType) {
+                case GET_ALL_SPOT:
+                    if (o != null) {
+                        displaySpotAroundMe((ArrayList<Spot>) o);
+                    } else {
+                        Log.w("tag", "receive list is empty");
+                        Toast.makeText(MapsActivity.this, "Error loading data", Toast.LENGTH_LONG).show();
+                    }
+
+                    break;
+                case GET_ALL_AREA:
+
+                    break;
+                case GET_SPOTS_AREA:
+                    if (o != null) {
+                        markerArrayList.clear(); // clear markers list
+                        for (Spot spot : (ArrayList<Spot>) o) {
+                            Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(spot.getLattitude(), spot.getLongitude())).title(spot.getName())); // marker on map
+                            marker.setTag(spot); // attribute spot to a marker
+                            markerArrayList.add(marker); // add marker in the list
+                        }
+                    } else {
+                        Log.w("tag", "receive list is empty");
+                        Toast.makeText(MapsActivity.this, "Error loading data", Toast.LENGTH_LONG).show();
+                    }
+
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

@@ -8,43 +8,45 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+//------------------------------------------------------------
+// ADD IN GRADLE : compile 'com.squareup.okhttp3:okhttp:3.8.1'
+//------------------------------------------------------------
+
 public class OkHttpUtils {
     public static String sendGetOkHttpRequest(String url) throws Exception{
         Log.w("tag", "Url : " + url);
         OkHttpClient client = new OkHttpClient();
-        //Création de la requete
+        //CREATE REQUEST
         Request request = new Request.Builder().url(url).build();
-        //Execution de la requête
+        //EXECUTE REQUEST
         Response response = client.newCall(request).execute();
-        //Analyse du code retour
-        if (response.code() != 200) {
-            throw new Exception("Réponse du serveur incorrect : " + response.code());
+        //ANALYSE RETURN CODE
+        if (response.code() != 200) {  // YOU CAN CUSTOMIZE ACCORDING TO THE RESPONSE CODE
+            throw new Exception("RESPONSE SERVER ERROR : " + response.code());
         }
         else {
-        //Résultat de la requete.
+            // REQUEST RESULT
             return response.body().string();
         }
-
     }
 
     public static String sendPostOkHttpRequest(String url, String paramJson) throws Exception {
-        System.out.println("Url : " + url);
+        Log.w("tag", "Url : " + url);
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-        //Corps de la requête
+        //REQUEST CONTENT
         RequestBody body = RequestBody.create(JSON, paramJson);
-        //Création de la requete
+        //CREATE REQUEST
         Request request = new Request.Builder().url(url).post(body).build();
-        //Execution de la requête
+        //EXECUTE REQUEST
         Response response = client.newCall(request).execute();
-        //Analyse du code retour
-        if (response.code() != 200) {
-            throw new Exception("Réponse du serveur incorrect : " + response.code());
+        //ANALYSE RETURN CODE
+        if (response.code() != 200) { // YOU CAN CUSTOMIZE ACCORDING TO THE RESPONSE CODE
+            throw new Exception("RESPONSE SERVER ERROR : " + response.code());
         }
         else {
-        //Résultat de la requete.
+            // REQUEST RESULT
             return response.body().string();
         }
-
     }
 }

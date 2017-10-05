@@ -8,21 +8,26 @@ import com.google.gson.Gson;
 
 public class MyApplication extends Application {
 
+    //-------------------
+    //  ATTRIBUTES
+    //-------------------
     public static Gson gson;
-
-
-
-
     private static MyApplication instance;
 
+    //-------------------
+    //  OVERRIDES
+    //-------------------
     @Override
     public void onCreate() {
         instance = this;
         super.onCreate();
-        ColorProject.init();
-        gson = new Gson();
+        ColorProject.init(); // INITIALIZE COLOR FOR THE PROJECT
+        gson = new Gson(); // INIT GSON
     }
 
+    //-------------------
+    //  METHODS
+    //-------------------
     public static MyApplication getInstance() {
         return instance;
     }

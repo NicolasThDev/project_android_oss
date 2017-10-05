@@ -1,5 +1,6 @@
 package com.example.nico.ossproject.bean.beanUtils;
 
+import com.example.nico.ossproject.bean.beanServer.Area;
 import com.example.nico.ossproject.bean.beanServer.LoginApp;
 import com.example.nico.ossproject.bean.beanServer.SiteUser;
 import com.example.nico.ossproject.bean.beanServer.Spot;
@@ -14,6 +15,7 @@ public class WSUtils {
 
     private static final String URL_SERVER = "http://192.168.1.14:8000/";
     private static final String GET_ALL_SPOTS = URL_SERVER + "getSpot";
+    private static final String GET_ALL_AREA = URL_SERVER + "getAreas";
     private static final String LOGIN_APP = URL_SERVER + "loginApp";
     private static final String GET_SPOT_IN_AREA = URL_SERVER + "getSpotInArea/";
 
@@ -33,5 +35,10 @@ public class WSUtils {
     public static ArrayList<Spot> getSpotInArea(int areaId) throws Exception {
         String json = OkHttpUtils.sendGetOkHttpRequest(GET_SPOT_IN_AREA + areaId);
         return MyApplication.gson.fromJson(json, new TypeToken<ArrayList<Spot>>(){}.getType());
+    }
+
+    public static ArrayList<Area> getAllAreas() throws Exception {
+        String json = OkHttpUtils.sendGetOkHttpRequest(GET_ALL_AREA);
+        return MyApplication.gson.fromJson(json, new TypeToken<ArrayList<Area>>(){}.getType());
     }
 }

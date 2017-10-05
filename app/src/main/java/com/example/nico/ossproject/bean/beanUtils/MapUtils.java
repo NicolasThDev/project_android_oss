@@ -15,16 +15,12 @@ import com.google.android.gms.maps.model.Polygon;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by nico on 30/08/2017.
- */
-
 public class MapUtils {
     public static void polygonZoomIn(Polygon polygon, GoogleMap googleMap){
         LatLngBounds.Builder latLngBounds = new LatLngBounds.Builder();
         List<LatLng> points = polygon.getPoints();
-        for (int i = 0; i<points.size(); i++){
-            latLngBounds.include(points.get(i));
+        for (LatLng latLng : points){
+            latLngBounds.include(latLng);
         }
         int padding = 50; // offset from edges of the map in pixels
         googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds.build(), padding));

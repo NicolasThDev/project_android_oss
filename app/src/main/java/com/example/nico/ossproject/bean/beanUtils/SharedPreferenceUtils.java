@@ -14,7 +14,7 @@ public class SharedPreferenceUtils {
     }
 
     // ---------------------------------
-    //  Sauvegarde USER
+    //  SAVE USER
     // ---------------------------------
     private static final String USER_KEY = "USER_KEY";
 
