@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class WSUtils {
 
-    private static final String URL_SERVER = "http://192.168.1.14:8000/";
+    private static final String URL_SERVER = "http://192.168.42.31:8000/";
     private static final String GET_ALL_SPOTS = URL_SERVER + "getSpot";
     private static final String GET_ALL_AREA = URL_SERVER + "getAreas";
     private static final String LOGIN_APP = URL_SERVER + "loginApp";
