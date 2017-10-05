@@ -107,21 +107,25 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void displaySpotAroundMe(ArrayList<Spot> listSpot) {
-        Log.w("tag", "displaySpotAroundMe");
-
         Location target = new Location("target");
-        ArrayList<Spot> spots = new ArrayList<>();
+        ArrayList<Spot> displaySpots = new ArrayList<>();
         for (Spot spot : listSpot) {
+            // set target location with spot location
             target.setLatitude(spot.getLattitude());
             target.setLongitude(spot.getLongitude());
+            // compare myLocation with spot location
             if (this.myLocation.distanceTo(target) < Integer.parseInt(et_aroundMe.getText().toString()) * 1000) {
-                spots.add(spot);
+                // add spot in display list
+                displaySpots.add(spot);
             }
         }
-        if (!spots.isEmpty()) {
+        if (!displaySpots.isEmpty()) {
             markerArrayList.clear();
-            markerArrayList.addAll(MapUtils.spotsZoomIn(spots, mMap, this.myLocation));
+            // add markers on map
+            markerArrayList.addAll(MapUtils.spotsZoomIn(displaySpots, mMap, this.myLocation));
 
+
+            // hidden virtual keyboard
             View view = this.getCurrentFocus();
             if (view != null) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
