@@ -19,16 +19,18 @@ public class SharedPreferenceUtils {
     private static final String USER_KEY = "USER_KEY";
 
     public static SiteUser getUser() {
-        String json = getSharedPreference().getString(USER_KEY, "");
-        return MyApplication.gson.fromJson(json, SiteUser.class);
+        String json = getSharedPreference().getString(USER_KEY, ""); // get user string
+        return MyApplication.gson.fromJson(json, SiteUser.class); // convert string to User with GSON
     }
 
     public static void saveUser(SiteUser siteUser) {
-        String jsonUser = MyApplication.gson.toJson(siteUser);
-        getSharedPreference().edit().putString(USER_KEY, jsonUser).apply();
+        String jsonUser = MyApplication.gson.toJson(siteUser); // convert User in string
+        getSharedPreference().edit().putString(USER_KEY, jsonUser).apply(); // save string in SharedPreference
     }
 
     public static void deleteUser(){
         getSharedPreference().edit().remove(USER_KEY).apply();
     }
+
+    // ----------------------------------
 }
