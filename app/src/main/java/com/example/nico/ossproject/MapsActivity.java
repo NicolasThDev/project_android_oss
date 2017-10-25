@@ -44,10 +44,13 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnPolygonClickListener, View.OnClickListener {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnPolygonClickListener, View.OnClickListener, LocationListener {
 
     public final static int COARSE_LOCATION_REQ_CODE = 10;
-
+    public final static int MENU_ID_MAP = 4;
+    public final static int MENU_ID_SEARCH = 3;
+    public final static int MENU_ID_DISCONNECT = 2;
+    public final static int MENU_ID_MYACCOUNT = 1;
 
     //------------------
     //  ENUM
@@ -101,37 +104,36 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void clickOnArea(int at, Polygon polygon) { // click on an area, launch asyntask and zoom on polygon
         clearMarker();
-        AT asyncTask = new AT(at);
-        asyncTask.execute();
-        MapUtils.polygonZoomIn(polygon, mMap);
+        AsyncTaskUtils asyncTaskUtils = new AsyncTaskUtils(AsyncType.GET_SPOTS_AREA, at);
+        asyncTaskUtils.execute();
+        MapUtils.polygonZoomIn(polygon, mMap); // zoom on area
     }
 
     private void displaySpotAroundMe(ArrayList<Spot> listSpot) {
-        Location target = new Location("target");
-        ArrayList<Spot> displaySpots = new ArrayList<>();
+        Log.w("tag", "launch function : displaySpotAroundMe");
+
+        Location target = new Location("target"); // create new Location
+        ArrayList<Spot> spots = new ArrayList<>();
         for (Spot spot : listSpot) {
-            // set target location with spot location
-            target.setLatitude(spot.getLattitude());
-            target.setLongitude(spot.getLongitude());
-            // compare myLocation with spot location
-            if (this.myLocation.distanceTo(target) < Integer.parseInt(et_aroundMe.getText().toString()) * 1000) {
-                // add spot in display list
-                displaySpots.add(spot);
+            target.setLatitude(spot.getLattitude()); // set latitude of location
+            target.setLongitude(spot.getLongitude()); // set longitude of location
+            if (this.myLocation.distanceTo(target) < Integer.parseInt(et_aroundMe.getText().toString()) * 1000) { // compare my location and spot location to distance value
+                spots.add(spot);
             }
         }
-        if (!displaySpots.isEmpty()) {
+        if (!spots.isEmpty()) {
             markerArrayList.clear();
-            // add markers on map
-            markerArrayList.addAll(MapUtils.spotsZoomIn(displaySpots, mMap, this.myLocation));
+            // display and zoom on spots markers
+            markerArrayList.addAll(MapUtils.spotsZoomIn(spots, mMap, this.myLocation));
 
-
-            // hidden virtual keyboard
+            // hid the virtual keyboard
             View view = this.getCurrentFocus();
             if (view != null) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
         } else {
+            // spots list empty in perimeter
             Toast.makeText(this, "Not spot in this perimeter !", Toast.LENGTH_SHORT).show();
         }
     }
@@ -152,8 +154,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         } else if (v == btn_search) {
             try {
                 Integer.parseInt(et_aroundMe.getText().toString());
-                ATallSpot at = new ATallSpot();
-                at.execute();
+                AsyncTaskUtils asyncTaskUtils = new AsyncTaskUtils(AsyncType.GET_ALL_SPOT);
+                asyncTaskUtils.execute();
             } catch (Exception e) {
                 if (et_aroundMe.getText().length() < 1) {
                     Toast.makeText(this, "Value is empty" + et_aroundMe.getText().toString(), Toast.LENGTH_SHORT).show();
@@ -181,49 +183,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, COARSE_LOCATION_REQ_CODE); // ask location permission
         }
         if (mlocationMgr.getAllProviders().contains(LocationManager.NETWORK_PROVIDER))
-            mlocationMgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 200, new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-                    myLocation.set(location);
-                }
-
-                @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {
-
-                }
-
-                @Override
-                public void onProviderEnabled(String provider) {
-
-                }
-
-                @Override
-                public void onProviderDisabled(String provider) {
-
-                }
-            });
+            mlocationMgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 200, this);
         if (mlocationMgr.getAllProviders().contains(LocationManager.GPS_PROVIDER))
-            mlocationMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 200, new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-                    myLocation.set(location);
-                }
-
-                @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {
-
-                }
-
-                @Override
-                public void onProviderEnabled(String provider) {
-
-                }
-
-                @Override
-                public void onProviderDisabled(String provider) {
-
-                }
-            });
+            mlocationMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 200, this);
 
 //        Toast.makeText(this, "Pseudo : " + SharedPreferenceUtils.getUser().getLast_name(), Toast.LENGTH_SHORT).show();
     }
@@ -250,10 +212,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Drawable mapIcon = getDrawable(android.R.drawable.ic_dialog_map);
         mapIcon.setColorFilter(getResources().getColor(R.color.colorPrimaryDark), PorterDuff.Mode.SRC_IN);
 
-        menu.add(0, 1, 0, R.string.myAccount);
-        menu.add(0, 2, 0, R.string.disconnect);
-        menu.add(0, 3, 0, R.string.search).setIcon(searchIcon).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        menu.add(0, 4, 0, R.string.map).setIcon(mapIcon).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.add(0, MENU_ID_MYACCOUNT, 0, R.string.myAccount);
+        menu.add(0, MENU_ID_DISCONNECT, 0, R.string.disconnect);
+        menu.add(0, MENU_ID_SEARCH, 0, R.string.search).setIcon(searchIcon).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.add(0, MENU_ID_MAP, 0, R.string.map).setIcon(mapIcon).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -262,11 +224,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case 3: // when search menu item selected
+            case MENU_ID_SEARCH: // when search menu item selected
                 Intent intent = new Intent(this, SearchSpotActivity.class);
                 startActivity(intent);
                 break;
-            case 2: // when disconnect menu item selected
+            case MENU_ID_DISCONNECT: // when disconnect menu item selected
                 SharedPreferenceUtils.deleteUser(); // delete user in shared preference
                 Intent intentLogin = new Intent(this, LoginActivity.class);
                 startActivity(intentLogin); // launch login activity
@@ -355,80 +317,30 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+        myLocation.set(location);
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
     //------------------
     //  INNER CLASS
     //------------------
-    private class AT extends AsyncTask {
 
-        private ArrayList<Spot> temp;
-        private int areaId;
-
-        private AT(int areaId) {
-            this.areaId = areaId;
-        }
-
-
-        @Override
-        protected ArrayList<Spot> doInBackground(Object[] params) {
-            try {
-                temp = WSUtils.getSpotInArea(areaId); // load spots to server
-                Log.w("tag", "temp size : " + temp.size());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return temp;
-        }
-
-        @Override
-        protected void onPostExecute(Object o) {
-            super.onPostExecute(o);
-            if (o != null) {
-                temp = (ArrayList<Spot>) o;
-
-                markerArrayList.clear(); // clear markers list
-                for (Spot spot : temp) {
-                    Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(spot.getLattitude(), spot.getLongitude())).title(spot.getName())); // marker on map
-                    marker.setTag(spot); // attribute spot to a marker
-                    markerArrayList.add(marker); // add marker in the list
-                }
-            } else {
-                Log.w("tag", "receive list is empty");
-                Toast.makeText(MapsActivity.this, "Error loading data", Toast.LENGTH_LONG).show();
-            }
-
-        }
-    }
-
-    private class ATallSpot extends AsyncTask {
-
-        private ArrayList<Spot> temp;
-
-        private ATallSpot() {
-        }
-
-
-        @Override
-        protected ArrayList<Spot> doInBackground(Object[] params) {
-            try {
-                temp = WSUtils.getAllSpots();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return temp;
-        }
-
-        @Override
-        protected void onPostExecute(Object o) {
-            super.onPostExecute(o);
-            if (o != null) {
-                displaySpotAroundMe(temp);
-            } else {
-                Log.w("tag", "receive list is empty");
-                Toast.makeText(MapsActivity.this, "Error loading data", Toast.LENGTH_LONG).show();
-            }
-
-        }
-    }
 
     public class AsyncTaskUtils extends AsyncTask {
 
@@ -462,7 +374,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 case GET_ALL_SPOT:
                     // LAUNCH REQUEST HERE !
                     try {
-                        temp = WSUtils.getAllSpots();
+                        temp = WSUtils.getAllSpots(); // get all spots to server
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -470,7 +382,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 case GET_ALL_AREA:
                     // LAUNCH REQUEST HERE !
                     try {
-                        temp = WSUtils.getAllAreas();
+                        temp = WSUtils.getAllAreas(); // get all areas to server
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -478,7 +390,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 case GET_SPOTS_AREA:
                     // LAUNCH REQUEST HERE !
                     try {
-                        temp = WSUtils.getSpotInArea(areaId); // load spots to server
+                        temp = WSUtils.getSpotInArea(areaId); // get all spots in area to server
 //                        Log.w("tag", "temp size : " + temp.size() );
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -497,12 +409,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             switch (asyncType) {
                 case GET_ALL_SPOT:
                     if (o != null) {
-                        displaySpotAroundMe((ArrayList<Spot>) o);
+                        displaySpotAroundMe((ArrayList<Spot>) o); // launch function display spot around me with receive list to server
                     } else {
                         Log.w("tag", "receive list is empty");
                         Toast.makeText(MapsActivity.this, "Error loading data", Toast.LENGTH_LONG).show();
                     }
-
                     break;
                 case GET_ALL_AREA:
 
@@ -519,7 +430,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         Log.w("tag", "receive list is empty");
                         Toast.makeText(MapsActivity.this, "Error loading data", Toast.LENGTH_LONG).show();
                     }
-
                     break;
                 default:
                     break;

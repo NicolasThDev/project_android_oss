@@ -321,9 +321,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
             try {
-                siteUser = WSUtils.loginAppServer(mEmail, mPassword);
+                siteUser = WSUtils.loginAppServer(mEmail, mPassword); // launch request to server for login
             } catch (InterruptedException e) {
                 return false;
             } catch (Exception e) {

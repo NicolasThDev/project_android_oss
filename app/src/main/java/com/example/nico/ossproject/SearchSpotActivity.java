@@ -111,7 +111,7 @@ public class SearchSpotActivity extends AppCompatActivity implements View.OnClic
         spotArrayList = new ArrayList<>();
         AT at = new AT();
         at.execute();
-        findViews();
+        findViews(); // init component
 
         spotListAdapter = new SpotListAdapter(spotArrayList, this);
         recyclerView.setAdapter(spotListAdapter);
@@ -121,23 +121,23 @@ public class SearchSpotActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0,1,0, R.string.myAccount);
-        menu.add(0,2,0, R.string.disconnect);
+        menu.add(0,MapsActivity.MENU_ID_MYACCOUNT,0, R.string.myAccount);
+        menu.add(0,MapsActivity.MENU_ID_DISCONNECT,0, R.string.disconnect);
         Drawable searchIcon = getDrawable(android.R.drawable.ic_search_category_default);
         searchIcon.setColorFilter(getResources().getColor(R.color.colorPrimaryDark), PorterDuff.Mode.SRC_IN);
 
         Drawable mapIcon = getDrawable(android.R.drawable.ic_dialog_map);
         mapIcon.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_IN);
 
-        menu.add(0,3,0, R.string.search).setIcon(searchIcon).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        menu.add(0,4,0, R.string.map).setIcon(mapIcon).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.add(0,MapsActivity.MENU_ID_SEARCH,0, R.string.search).setIcon(searchIcon).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.add(0,MapsActivity.MENU_ID_MAP,0, R.string.map).setIcon(mapIcon).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case 4:
+            case MapsActivity.MENU_ID_MAP:
                 Intent intent = new Intent(this, MapsActivity.class);
                 startActivity(intent);
                 break;
@@ -147,8 +147,8 @@ public class SearchSpotActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            spotListAdapter.setCheckAll(isChecked);
-            spotListAdapter.notifyDataSetChanged();
+        spotListAdapter.setCheckAll(isChecked);
+        spotListAdapter.notifyDataSetChanged();
     }
 
     @Override
